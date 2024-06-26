@@ -1,0 +1,25 @@
+version: '3.6'
+services:
+  host:
+    container_name: ${HOST_CONTAINER_NAME}
+    hostname: ${HOST_NAME}
+    image: ${HOST_CONTAINER_IMAGE}
+    build:
+      context: ./_docker/host
+      dockerfile: Dockerfile
+    networks:
+      - network
+    restart: unless-stopped
+    volumes:
+      - ./${DOCUMENT_ROOT}:/var/www/html/
+      - ./${PHP_INI}:/usr/local/etc/php/php.ini
+      - ./${APACHE_PREFORK}:/etc/apache2/mods-available/mpm_prefork.conf
+      - tempdata:/var/www/html/${TEMP_DIR}
+    ports:
+      - ${HOST_PORT}:80
+volumes: 
+  tempdata:
+    name: ${HOST_CONTAINER_NAME}-tempdata
+networks:
+  network:
+    driver: bridge
